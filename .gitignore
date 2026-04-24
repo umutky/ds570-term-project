@@ -22,3 +22,6 @@ __pycache__/
 # OS
 .DS_Storeß
 Thumbs.db
+
+# Plan file
+DS570 Term Project Plan.md
