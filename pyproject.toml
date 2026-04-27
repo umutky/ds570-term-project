@@ -20,7 +20,9 @@ dependencies = [
     "lightgbm>=4.3",
     "matplotlib>=3.9",
     "plotly>=5.20",
-    "kaggle>=1.6",
+    "requests>=2.31",
+    "statsmodels>=0.14",
+    "streamlit>=1.35",
 ]
 
 [project.optional-dependencies]
@@ -34,14 +36,12 @@ notebooks = [
     "ipykernel",
     "ipywidgets",
 ]
-app = [
-    "streamlit>=1.35",
-]
 
 [project.scripts]
+rf-fetch   = "retail_forecast.cli:fetch_data"
+rf-process = "retail_forecast.cli:process_data"
 rf-train   = "retail_forecast.cli:train"
 rf-predict = "retail_forecast.cli:predict"
-rf-process = "retail_forecast.cli:process_data"
 
 [tool.setuptools.packages.find]
 where = ["src"]

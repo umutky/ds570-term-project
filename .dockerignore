@@ -1,16 +1,17 @@
-# Ignore virtual environment and git files
 .venv
 .git
 .gitignore
 
-# Ignore data and output folders to keep the image small
 data/raw/*
 data/processed/*
 outputs/models/*
+outputs/reports/*
 
-# Ignore Python cache files
+notebooks/
+scripts/
+tests/
+
 __pycache__/
 *.pyc
-
-# Ignore OS-generated files
 .DS_Store
+.env

@@ -1,4 +1,4 @@
-# Data 
+# Data (fetch edilir, commit edilmez)
 data/raw/*
 data/processed/*
 !data/raw/.gitkeep
@@ -6,7 +6,9 @@ data/processed/*
 
 # Outputs
 outputs/models/*
+outputs/reports/*
 !outputs/models/.gitkeep
+!outputs/reports/.gitkeep
 
 # Python
 __pycache__/
@@ -14,14 +16,18 @@ __pycache__/
 .venv/
 *.egg-info/
 
-# IDE
-.vscode/
-.idea/
+# Jupyter
 .ipynb_checkpoints/
 
-# OS
-.DS_Storeß
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
 Thumbs.db
 
-# Plan file
+# Secrets
+.env
+
+# Do not push plan file.
 DS570 Term Project Plan.md
+DS570_Proje_Plani_v3.md
