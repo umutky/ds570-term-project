@@ -4,45 +4,7 @@ End-to-end retail demand forecasting pipeline using the M5 Accuracy Competition 
 Built as the DS570 final project.
 
 **Scope:** CA_1 store × 3,049 products × 3 categories (HOBBIES, HOUSEHOLD, FOODS)
-**Model:** LightGBM regression with Tweedie objective (intermittent / zero-inflated demand)
-**Novelty:** Tweedie vs. Gaussian loss comparison on intermittent demand + interactive what-if simulator
-
----
-
-## Quickstart (Docker)
-
-No local files needed. The subset data is fetched automatically from GitHub Releases.
-
-```bash
-# Build the image (~2-3 min first time)
-docker build -t retail-forecast .
-
-# Fetch data + launch dashboard
-docker run --rm -p 8501:8501 retail-forecast
-```
-
-Open [http://localhost:8501](http://localhost:8501) in your browser.
-
----
-
-## Quickstart (Local)
-
-```bash
-# 1. Install dependencies (requires uv)
-uv sync --all-extras
-
-# 2. Fetch the CA_1 subset from GitHub Releases
-uv run rf-fetch
-
-# 3. Process into parquet
-uv run rf-process
-
-# 4. Train the model
-uv run rf-train
-
-# 5. Launch the dashboard
-uv run streamlit run app/streamlit_app.py
-```
+**Model:** LightGBM regression
 
 ---
 
@@ -98,8 +60,8 @@ retail-demand-forecasting/
 ├── tests/
 │   └── test_fetch.py     # Fetch logic smoke tests
 ├── outputs/
-│   ├── models/           # Saved models (.gitignore'd)
-│   └── reports/          # Metrics and figures (.gitignore'd)
+│   ├── models/           # Saved models
+│   └── reports/          # Metrics and figures
 ├── Dockerfile
 ├── pyproject.toml
 └── uv.lock
@@ -119,7 +81,3 @@ retail-demand-forecasting/
 ## Limitations & Future Work
 
 - **CA_1 only:** Cross-store generalization is not evaluated; model may not transfer to TX/WI stores directly.
-- **No hierarchical reconciliation:** Item-level forecasts are independent; dept/category-level aggregations may be inconsistent.
-- **Cold-start items:** Items with very few non-zero observations (extreme sparsity) are modeled but forecasts are unreliable.
-- **Rare events:** Super Bowl, Christmas — very few samples in training data, model is uncertain.
-- **Future:** Quantile regression (p10/p50/p90), multi-horizon evaluation, online re-training.
