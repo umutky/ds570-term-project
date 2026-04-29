@@ -32,43 +32,6 @@ uv run python scripts/build_subset.py
 
 ---
 
-## Project Structure
-
-```
-retail-demand-forecasting/
-├── data/
-│   ├── raw/          # m5_ca1_subset.parquet — fetched at runtime (.gitignore'd)
-│   └── processed/    # feature-engineered parquets (.gitignore'd)
-├── notebooks/
-│   ├── 2026-05-04-ko-01-eda-global.ipynb     # All M5: store comparison → CA_1 selection
-│   └── 2026-05-04-ko-02-eda-ca1-focused.ipynb # CA_1 deep-dive: intermittent demand
-├── scripts/
-│   └── build_subset.py   # One-time: builds CA_1 subset from full M5 CSVs
-├── src/
-│   └── retail_forecast/
-│       ├── config.py     # Paths, DATA_URL, DATA_SHA256
-│       ├── data/
-│       │   ├── fetch.py  # HTTP fetch + SHA256 verification + caching
-│       │   └── load.py   # Parquet loading, wide-to-long, save_processed
-│       ├── features.py   # Lag / rolling / calendar / price features (Week 3)
-│       ├── models/       # LightGBM + baseline models (Week 3)
-│       ├── evaluate.py   # RMSE, MAE, WMAPE, backtest (Week 3)
-│       └── cli.py        # Entry points: rf-fetch / rf-process / rf-train / rf-predict
-├── app/
-│   ├── streamlit_app.py  # Main dashboard
-│   └── pages/            # Multi-page Streamlit (Week 4)
-├── tests/
-│   └── test_fetch.py     # Fetch logic smoke tests
-├── outputs/
-│   ├── models/           # Saved models
-│   └── reports/          # Metrics and figures
-├── Dockerfile
-├── pyproject.toml
-└── uv.lock
-```
-
----
-
 ## Design Decisions
 
 - **LightGBM Tweedie:** M5 competition winners used tree-based ensembles with Tweedie loss. Tweedie is mathematically suited for zero-inflated count data; standard L2 (Gaussian) produces biased predictions when zeros dominate.
