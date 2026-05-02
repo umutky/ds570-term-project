@@ -6,9 +6,17 @@ data/processed/*
 
 # Outputs
 outputs/models/*
-outputs/reports/*
 !outputs/models/.gitkeep
+
+outputs/reports/*
 !outputs/reports/.gitkeep
+!outputs/reports/eda_global
+!outputs/reports/eda_ca1
+
+outputs/reports/eda_global/*
+!outputs/reports/eda_global/.gitkeep
+outputs/reports/eda_ca1/*
+!outputs/reports/eda_ca1/.gitkeep
 
 # Python
 __pycache__/
@@ -30,4 +38,4 @@ Thumbs.db
 
 # Do not push plan file.
 DS570 Term Project Plan.md
-DS570_Proje_Plani_v3.md
+# DS570_Proje_Plani_v3.md

@@ -10,7 +10,7 @@ OUTPUTS_DIR = PROJECT_ROOT / "outputs"
 MODELS_DIR = OUTPUTS_DIR / "models"
 REPORTS_DIR = OUTPUTS_DIR / "reports"
 
-# CA_1 subset — hosted as a GitHub Release asset.
+# CA_1 subset - hosted as a GitHub Release asset.
 # DATA_URL and DATA_SHA256 will be updated in Week 2 once the
 # subset parquet is built and uploaded to the GitHub Release.
 SUBSET_FILE = "m5_ca1_subset.parquet"
