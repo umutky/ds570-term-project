@@ -29,7 +29,7 @@ def train():
 
     processed = config.PROCESSED_DATA_DIR / "sales_long.parquet"
     if not processed.exists():
-        print("Processed data not found — running rf-process first...")
+        print("Processed data not found. Running rf-process first...")
         process_data()
 
     print(f"Loading {processed} ...")
@@ -83,11 +83,10 @@ def train():
 
 
 def predict():
-    """Load the Tweedie model and run inference on the test set, save predictions."""
+    """Load the Tweedie model and produce a 28-day ahead demand forecast."""
     import pandas as pd
-    from retail_forecast.features import build_feature_matrix
+    from retail_forecast.forecast import forecast_future
     from retail_forecast.models.lgbm import LGBMForecast
-    from retail_forecast.predict import predict as run_predict
 
     model_path = config.MODELS_DIR / "lgbm_tweedie.pkl"
     if not model_path.exists():
@@ -95,22 +94,39 @@ def predict():
 
     processed = config.PROCESSED_DATA_DIR / "sales_long.parquet"
     if not processed.exists():
-        raise FileNotFoundError(f"Processed data not found. Run rf-process first.")
+        raise FileNotFoundError("Processed data not found. Run rf-process first.")
 
     print(f"Loading model from {model_path} ...")
     model = LGBMForecast.load(model_path)
 
-    print("Loading and featurising data ...")
+    print("Loading processed data ...")
     df = pd.read_parquet(processed)
-    fm = build_feature_matrix(df)
+    last_date = df["date"].max()
+    print(f"  Last training date: {last_date.date()}")
+    print(f"  Forecasting: {(last_date + pd.Timedelta(days=1)).date()} "
+          f"to {(last_date + pd.Timedelta(days=28)).date()}")
 
-    dates = fm["date"].sort_values().unique()
-    test_df = fm[fm["date"] > dates[int(len(dates) * 0.90)]]
-    print(f"  Running inference on {len(test_df):,} test rows ...")
+    forecast = forecast_future(model, df, horizon=28)
 
-    result = run_predict(model, test_df)
+    # Merge item metadata for richer output
+    meta = df.drop_duplicates("id")[["id", "item_id", "dept_id", "cat_id"]].copy()
+    forecast = forecast.merge(meta, on="id", how="left")
 
-    out_path = config.REPORTS_DIR / "predictions.parquet"
+    out_path = config.REPORTS_DIR / "forecast_28d.parquet"
     config.REPORTS_DIR.mkdir(parents=True, exist_ok=True)
-    result.to_parquet(out_path, index=False)
-    print(f"Predictions saved → {out_path}")
+    forecast.to_parquet(out_path, index=False)
+    print(f"\nForecast saved to {out_path}")
+    print(f"  Rows : {len(forecast):,}  ({forecast['id'].nunique():,} items × 28 days)")
+    print(f"  Total predicted demand: {forecast['y_pred'].sum():,.0f} units")
+
+    # Summary by category
+    if "cat_id" in forecast.columns:
+        summary = (
+            forecast.groupby("cat_id")["y_pred"]
+            .sum()
+            .rename("total_demand")
+            .reset_index()
+        )
+        print("\n  28-day forecast by category:")
+        for _, row in summary.iterrows():
+            print(f"    {row['cat_id']:<12}: {row['total_demand']:>10,.0f} units")
