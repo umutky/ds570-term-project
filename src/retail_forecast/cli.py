@@ -62,11 +62,13 @@ def train():
 
     config.MODELS_DIR.mkdir(parents=True, exist_ok=True)
 
+    trained_models = {}
     for ModelClass, name in [(LGBMTweedie, "tweedie"), (LGBMGaussian, "gaussian")]:
         print(f"\nTraining LightGBM ({name}) ...")
         model = ModelClass(num_boost_round=1000, early_stopping_rounds=50)
         model.fit(train_df, val_df)
         model.save(config.MODELS_DIR / f"lgbm_{name}.pkl")
+        trained_models[name] = model
 
         tracker = ModelTracker(f"LGBM_{name.capitalize()}")
         tracker.log_data(fm, train_end, val_end)
@@ -79,7 +81,16 @@ def train():
         tracker.save()
         tracker.print_report()
 
-    print(f"\nDone. Models saved to {config.MODELS_DIR}")
+    # Save test-set predictions for both models (used by the dashboard)
+    import numpy as np
+    config.REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+    for name, model in trained_models.items():
+        preds = np.maximum(model.predict(test_df), 0)
+        out = test_df[["id", "date", "sales", "cat_id", "dept_id"]].copy()
+        out["y_pred"] = preds
+        out.to_parquet(config.REPORTS_DIR / f"test_predictions_{name}.parquet", index=False)
+    print(f"\nTest predictions saved to {config.REPORTS_DIR}")
+    print(f"Done. Models saved to {config.MODELS_DIR}")
 
 
 def predict():
