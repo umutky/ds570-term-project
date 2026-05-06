@@ -63,11 +63,14 @@ def add_calendar_features(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def add_price_features(df: pd.DataFrame) -> pd.DataFrame:
-    """Add price momentum and relative-to-annual-mean features."""
+    """Add price momentum and trailing-mean relative price features."""
     df = _sort(df)
     df["price_change_pct"] = df.groupby("id")["sell_price"].pct_change().fillna(0)
-    annual_mean = df.groupby(["id", "year"])["sell_price"].transform("mean")
-    df["price_rel_year"] = df["sell_price"] / annual_mean.replace(0, np.nan)
+    # Trailing 365-day mean of the *previous* day's price to avoid any future leakage.
+    trailing_mean = df.groupby("id")["sell_price"].transform(
+        lambda s: s.shift(1).rolling(365, min_periods=30).mean()
+    )
+    df["price_rel_year"] = df["sell_price"] / trailing_mean.replace(0, np.nan)
     return df
 
 

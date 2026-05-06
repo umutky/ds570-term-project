@@ -62,15 +62,23 @@ def forecast_future(
     meta = df.drop_duplicates(ID_COL).set_index(ID_COL).reindex(item_ids)
 
     # Carry forward the last non-null sell_price per item
+    price_df = df.dropna(subset=["sell_price"]).sort_values("date")
     last_price_series = (
-        df.dropna(subset=["sell_price"])
-        .sort_values("date")
-        .groupby(ID_COL)["sell_price"]
+        price_df.groupby(ID_COL)["sell_price"]
         .last()
         .reindex(item_ids)
         .fillna(1.0)
     )
     last_price: np.ndarray = last_price_series.values.astype(float)
+
+    # Trailing 365-day price mean per item (mirrors the feature engineering logic)
+    trailing_mean_series = (
+        price_df.groupby(ID_COL)["sell_price"]
+        .apply(lambda s: s.tail(365).mean())
+        .reindex(item_ids)
+        .fillna(1.0)
+    )
+    price_rel_year: np.ndarray = (last_price / trailing_mean_series.values).astype(float)
 
     # Preserve category encoding from training data
     dept_cats = df["dept_id"].astype("category").cat.categories
@@ -155,7 +163,7 @@ def forecast_future(
                 # Price (carry forward, no change assumed)
                 "sell_price":       last_price,
                 "price_change_pct": 0.0,
-                "price_rel_year":   1.0,
+                "price_rel_year":   price_rel_year,
             }
         )
 
