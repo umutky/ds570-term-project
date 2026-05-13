@@ -19,7 +19,10 @@ The only requirement is Docker. No data download, no account, no local setup nee
 docker build -t retail-forecast .
 
 # Run the dashboard (data fetch + training happen automatically on first run)
-docker run --rm -p 8501:8501 retail-forecast
+docker run -p 8501:8501 \
+  -v retail-forecast-data:/app/data \
+  -v retail-forecast-outputs:/app/outputs \
+  retail-forecast
 ```
 
 Then open [http://localhost:8501](http://localhost:8501) in your browser.
@@ -30,7 +33,8 @@ On first run the container will:
 3. Train both Tweedie and Gaussian LightGBM models (~2-3 minutes)
 4. Launch the Streamlit dashboard
 
-Subsequent runs skip steps 1–3 if the data and models are already cached in the container.
+Subsequent runs reuse the cached data and models from the named volumes, so steps 1–3
+are skipped and the dashboard launches in seconds.
 
 > **Timing:** First run takes roughly 4–5 minutes total. Subsequent runs launch in seconds.
 
@@ -254,16 +258,21 @@ uv run pytest
 
 ## Limitations & Future Work
 
-- **CA_1 only:** The model is trained on a single store. Performance on TX or WI stores
-  is not evaluated.
-- **Cold-start items:** Items with very few historical sales (new products or seasonal
-  items just entering the catalog) have sparse lag features. The model tends to underfit
-  these — a known weakness of lag-based approaches.
+- **CA_1 focus:** The model is trained and evaluated on the CA_1 store. The pipeline
+  itself is store-agnostic — repointing `DATA_URL` in `config.py` to a different store's
+  subset and rerunning `rf-fetch → rf-process → rf-train → rf-predict` is all that is
+  needed to apply the same methodology to TX_1, WI_2, or any other M5 store.
+- **Recursive forecast error accumulation:** The 28-day forecast is generated
+  step-by-step: each day's prediction is fed back as a lag feature for the next day.
+  Errors compound over the horizon — day-28 forecasts are less accurate than day-1
+  forecasts because they build on 27 prior predictions rather than observed sales.
+  Short-lag features (lag_1, lag_7) are affected most; lag_28 and lag_365 always draw
+  from historical data within a 28-day horizon and are therefore unaffected.
+- **Cold-start items:** Items with very few historical sales have sparse lag features.
+  The model tends to underfit these — a known weakness of lag-based approaches.
 - **Rare events:** Events like Super Bowl or Christmas appear very few times in the
-  training data. The model learns an average effect but cannot capture
-  how an unusual edition of the event might shift demand differently.
+  training data. The model learns an average effect but cannot capture how an unusual
+  edition of the event might shift demand differently.
 - **Point forecasts only:** The pipeline produces single-value predictions.
   Prediction intervals (e.g., quantile regression) would make the uncertainty explicit
   and would be a natural next step.
-- **No cross-store generalization:** Adding store embeddings or training a global model
-  across all 10 stores would be a meaningful extension.
