@@ -7,6 +7,8 @@ import pytest
 from retail_forecast.features import (
     FEATURE_COLS,
     add_calendar_features,
+    add_hierarchical_features,
+    add_intermittency_features,
     add_lag_features,
     add_price_features,
     add_rolling_features,
@@ -74,13 +76,13 @@ class TestLagFeatures:
 class TestRollingFeatures:
     def test_no_future_leakage_row0(self, sample_df: pd.DataFrame) -> None:
         """Rolling mean for the very first row of each item must be NaN (no history)."""
-        df = add_rolling_features(sample_df, windows=[3], stats=["mean"])
+        df = add_rolling_features(sample_df, mean_windows=[3], std_windows=[])
         for _, grp in df.sort_values("date").groupby("id"):
             grp = grp.reset_index(drop=True)
             assert np.isnan(grp.iloc[0]["sales_rolling_mean_3"])
 
     def test_rolling_columns_created(self, sample_df: pd.DataFrame) -> None:
-        df = add_rolling_features(sample_df, windows=[7], stats=["mean", "std"])
+        df = add_rolling_features(sample_df, mean_windows=[7], std_windows=[7])
         assert "sales_rolling_mean_7" in df.columns
         assert "sales_rolling_std_7" in df.columns
 
@@ -100,6 +102,40 @@ class TestCalendarFeatures:
     def test_has_event_binary(self, sample_df: pd.DataFrame) -> None:
         df = add_calendar_features(sample_df)
         assert set(df["has_event"].unique()).issubset({0, 1})
+
+    def test_event_type_encoded_present(self, sample_df: pd.DataFrame) -> None:
+        df = add_calendar_features(sample_df)
+        assert "event_type_encoded" in df.columns
+        assert set(df["event_type_encoded"].unique()).issubset({0, 1, 2, 3, 4})
+
+
+class TestIntermittencyFeatures:
+    def test_zero_streak_non_negative(self, sample_df: pd.DataFrame) -> None:
+        df = add_intermittency_features(sample_df)
+        assert (df["zero_streak"] >= 0).all()
+
+    def test_days_since_columns_present(self, sample_df: pd.DataFrame) -> None:
+        df = add_intermittency_features(sample_df)
+        assert "zero_streak" in df.columns
+        assert "days_since_last_sale" in df.columns
+
+    def test_zero_streak_resets_after_sale(self, sample_df: pd.DataFrame) -> None:
+        """zero_streak must be 0 whenever lag-1 sales > 0."""
+        df = add_intermittency_features(sample_df)
+        df["_lag1"] = df.groupby("id")["sales"].shift(1)
+        mask = df["_lag1"] > 0
+        assert (df.loc[mask, "zero_streak"] == 0).all()
+
+
+class TestHierarchicalFeatures:
+    def test_dept_rolling_columns_present(self, sample_df: pd.DataFrame) -> None:
+        df = add_hierarchical_features(sample_df)
+        assert "dept_rolling_mean_7" in df.columns
+        assert "dept_rolling_mean_28" in df.columns
+
+    def test_dept_rolling_non_negative(self, sample_df: pd.DataFrame) -> None:
+        df = add_hierarchical_features(sample_df)
+        assert (df["dept_rolling_mean_7"].dropna() >= 0).all()
 
 
 class TestPriceFeatures:

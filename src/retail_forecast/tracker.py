@@ -31,12 +31,15 @@ from retail_forecast.features import FEATURE_COLS
 RUNS_DIR = REPORTS_DIR / "model_runs"
 
 _FEATURE_GROUPS: dict[str, list[str]] = {
-    "lag":      [c for c in FEATURE_COLS if "sales_lag_" in c],
-    "rolling":  [c for c in FEATURE_COLS if "rolling_" in c],
-    "calendar": ["wday", "month", "is_weekend", "is_month_start", "is_month_end",
-                 "has_event", "has_snap", "doy_sin", "doy_cos", "week_of_year"],
-    "price":    ["sell_price", "price_change_pct", "price_rel_year"],
-    "id":       ["dept_id", "cat_id"],
+    "lag":           [c for c in FEATURE_COLS if "sales_lag_" in c],
+    "rolling":       [c for c in FEATURE_COLS if c.startswith("sales_rolling_")],
+    "intermittency": ["zero_streak", "days_since_last_sale"],
+    "hierarchical":  ["dept_rolling_mean_7", "dept_rolling_mean_28"],
+    "calendar":      ["wday", "month", "is_weekend", "is_month_start", "is_month_end",
+                      "has_event", "event_type_encoded", "has_snap",
+                      "doy_sin", "doy_cos", "week_of_year"],
+    "price":         ["sell_price", "price_change_pct", "price_rel_year"],
+    "id":            ["dept_id", "cat_id"],
 }
 
 

@@ -36,14 +36,27 @@ def train():
     df = pd.read_parquet(processed)
     print(f"  Shape: {df.shape}")
 
+    from retail_forecast.features import FEATURE_COLS
+    import pyarrow.parquet as pq
+
     feat_cache = config.PROCESSED_DATA_DIR / "feature_matrix.parquet"
+    need_rebuild = True
     if feat_cache.exists():
-        print(f"Loading cached feature matrix ...")
-        fm = pd.read_parquet(feat_cache)
-        for col in ["cat_id", "dept_id"]:
-            if col in fm.columns:
-                fm[col] = fm[col].astype("category")
-    else:
+        cached_cols = set(pq.read_schema(feat_cache).names)
+        missing = [c for c in FEATURE_COLS if c not in cached_cols]
+        if missing:
+            print(f"Cached feature matrix is missing {len(missing)} column(s): {missing}")
+            print("Rebuilding feature matrix with updated features...")
+            feat_cache.unlink()
+        else:
+            print("Loading cached feature matrix...")
+            fm = pd.read_parquet(feat_cache)
+            for col in ["cat_id", "dept_id"]:
+                if col in fm.columns:
+                    fm[col] = fm[col].astype("category")
+            need_rebuild = False
+
+    if need_rebuild:
         print("Building feature matrix (this may take a few minutes)...")
         fm = build_feature_matrix(df)
         fm.to_parquet(feat_cache, index=False)
