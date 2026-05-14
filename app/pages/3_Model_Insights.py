@@ -1,13 +1,16 @@
 import json
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import shap
 import streamlit as st
 
-from retail_forecast.config import MODELS_DIR, REPORTS_DIR
+from retail_forecast.config import MODELS_DIR, PROCESSED_DATA_DIR, REPORTS_DIR
+from retail_forecast.features import FEATURE_COLS
 from retail_forecast.models.lgbm import LGBMForecast
 
 st.title("Model Insights")
@@ -240,3 +243,15 @@ if tweedie_data is not None:
         margin=dict(t=30, b=40),
     )
     st.plotly_chart(fig_agg, use_container_width=True)
+
+
+# SHAP
+st.divider()
+st.subheader("SHAP Feature Impact Analysis")
+st.info(
+    "Detailed SHAP analysis — global importance (Tweedie vs Gaussian side-by-side), "
+    "feature dependence plots, single-prediction waterfall, and category-level impact — "
+    "is available on the dedicated **SHAP Analysis** page.",
+    icon="🔬",
+)
+st.page_link("pages/5_SHAP_Analysis.py", label="Go to SHAP Analysis →", icon="🔬")

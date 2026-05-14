@@ -42,6 +42,11 @@ def home():
         st.page_link("pages/4_Forecast_Charts.py", label="Forecast Charts", icon="📈")
         st.caption("Actual vs predicted time-series across total, category, department, and item levels.")
 
+    col5, _ = st.columns([1, 3])
+    with col5:
+        st.page_link("pages/5_SHAP_Analysis.py", label="SHAP Analysis", icon="🔬")
+        st.caption("SHAP feature attributions, dependence plots, waterfall, and category impact.")
+
 
 pg = st.navigation([
     st.Page(home, title="Home", icon="🏠"),
@@ -49,5 +54,6 @@ pg = st.navigation([
     st.Page("pages/2_Forecast.py", title="28-Day Forecast", icon="🔮"),
     st.Page("pages/3_Model_Insights.py", title="Model Insights", icon="🎯"),
     st.Page("pages/4_Forecast_Charts.py", title="Forecast Charts", icon="📈"),
+    st.Page("pages/5_SHAP_Analysis.py", title="SHAP Analysis", icon="🔬"),
 ])
 pg.run()
