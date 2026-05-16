@@ -32,10 +32,7 @@ def two_item_400d() -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-# ---------------------------------------------------------------------------
 # Metric unit tests
-# ---------------------------------------------------------------------------
-
 class TestMetrics:
     def test_rmse_perfect(self) -> None:
         y = np.array([1.0, 2.0, 3.0])
@@ -64,9 +61,7 @@ class TestMetrics:
         assert metrics["rmse"] == pytest.approx(np.sqrt(0.5), rel=1e-6)
 
 
-# ---------------------------------------------------------------------------
 # Baseline model tests
-# ---------------------------------------------------------------------------
 
 class TestSeasonalNaive:
     def test_output_length(self, two_item_400d: pd.DataFrame) -> None:
@@ -116,9 +111,7 @@ class TestZeroForecast:
         assert np.all(preds == 0)
 
 
-# ---------------------------------------------------------------------------
 # LightGBM smoke tests
-# ---------------------------------------------------------------------------
 
 @pytest.fixture()
 def feature_matrix(two_item_400d: pd.DataFrame) -> pd.DataFrame:

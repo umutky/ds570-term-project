@@ -312,7 +312,7 @@ class ModelTracker:
         sep()
 
         # Test by aggregation level
-        line(f"  TEST SET — by aggregation level")
+        line(f"  TEST SET - by aggregation level")
         line(f"  {'Level':<12} {'RMSE':>10} {'MAE':>10} {'WMAPE':>10} {'WRMSSE':>10}")
         line("  " + "─" * 54)
         for lvl, lvl_m in m.get("test", {}).get("by_level", {}).items():

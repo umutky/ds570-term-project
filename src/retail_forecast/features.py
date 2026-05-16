@@ -1,6 +1,6 @@
 """Feature engineering for the CA_1 retail demand dataset.
 
-All lag and rolling features use shift(1) or greater to prevent target leakage —
+All lag and rolling features use shift(1) or greater to prevent target leakage -
 no future sales information leaks into the feature matrix.
 
 Input: long-format DataFrame (from load.py), sorted by (id, date).
@@ -89,7 +89,7 @@ def add_intermittency_features(df: pd.DataFrame) -> pd.DataFrame:
     """Add zero_streak and days_since_last_sale to capture demand intermittency.
 
     Both features are computed on lag-1 shifted sales to prevent leakage.
-    Uses vectorized numpy accumulate — no Python loops over rows.
+    Uses vectorized numpy accumulate - no Python loops over rows.
     """
     df = _sort(df)
     df["_s1"] = df.groupby("id")["sales"].shift(1).fillna(0)
@@ -125,7 +125,7 @@ def add_hierarchical_features(df: pd.DataFrame) -> pd.DataFrame:
         .rename(columns={"sales": "_dept_sales"})
         .sort_values(["dept_id", "date"])
     )
-    # Shift by 1 before rolling so no leakage — the dept total on day N
+    # Shift by 1 before rolling so no leakage - the dept total on day N
     # uses only days <= N-1
     dept_daily["dept_rolling_mean_7"] = dept_daily.groupby("dept_id")["_dept_sales"].transform(
         lambda s: s.shift(1).rolling(7, min_periods=1).mean()
@@ -160,7 +160,7 @@ FEATURE_COLS: list[str] = [
     "has_event", "event_type_encoded", "has_snap", "doy_sin", "doy_cos", "week_of_year",
     # Price
     "sell_price", "price_change_pct", "price_rel_year",
-    # Categorical IDs — LightGBM handles these natively as category dtype
+    # Categorical IDs - LightGBM handles these natively as category dtype
     "dept_id", "cat_id",
 ]
 

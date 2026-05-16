@@ -7,7 +7,7 @@ import streamlit as st
 
 from retail_forecast.config import REPORTS_DIR
 
-st.title("Actual vs Predicted — Test Set")
+st.title("Actual vs Predicted - Test Set")
 st.caption(
     "Test period: 2015-12-18 → 2016-05-22  ·  "
     "Sales and predictions aggregated at four levels."
@@ -109,7 +109,7 @@ with tab_total:
 # Category
 with tab_cat:
     cats = [c for c in CAT_ORDER if c in df["cat_id"].unique()]
-    st.caption(f"{len(cats)} categories — daily total units per category")
+    st.caption(f"{len(cats)} categories - daily total units per category")
 
     fig = make_subplots(
         rows=len(cats), cols=1,
@@ -139,7 +139,7 @@ with tab_cat:
 # Department
 with tab_dept:
     depts = [d for d in DEPT_ORDER if d in df["dept_id"].unique()]
-    st.caption(f"{len(depts)} departments — daily total units per department")
+    st.caption(f"{len(depts)} departments - daily total units per department")
 
     fig = make_subplots(
         rows=len(depts), cols=1,
@@ -168,7 +168,7 @@ with tab_dept:
 
 #Item
 with tab_item:
-    st.caption("One item per category — daily actual vs predicted on the test set.")
+    st.caption("One item per category - daily actual vs predicted on the test set.")
 
     all_items = sorted(df["id"].unique().tolist())
 

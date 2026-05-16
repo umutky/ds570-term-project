@@ -170,7 +170,7 @@ with col2:
 
     item_total = item_fc["y_pred"].sum()
     st.metric(
-        label=f"Total forecast demand — {selected_item} (28 days)",
+        label=f"Total forecast demand - {selected_item} (28 days)",
         value=f"{item_total:.1f} units",
     )
 

@@ -6,7 +6,7 @@ import streamlit as st
 from retail_forecast.config import PROCESSED_DATA_DIR
 
 st.title("Data Explorer")
-st.caption("Historical sales from the M5 dataset — CA_1 store, all products.")
+st.caption("Historical sales from the M5 dataset - CA_1 store, all products.")
 
 
 @st.cache_data
@@ -37,7 +37,7 @@ selected_item = st.sidebar.selectbox("Item", items)
 
 
 # Item time series
-st.subheader(f"Sales time series — {selected_item}")
+st.subheader(f"Sales time series - {selected_item}")
 
 item_df = (
     df[df["id"] == selected_item]
@@ -145,7 +145,7 @@ fig3 = px.histogram(
     barmode="overlay",
     opacity=0.7,
     labels={"sales": "Units sold per item-day", "cat_id": "Category"},
-    color_discrete_map={"FOODS": "#1f77b4", "HOUSEHOLD": "#ff7f0e", "HOBBIES": "#2ca02c"},
+    color_discrete_map={"FOODS": "#636EFA", "HOBBIES": "#EF553B", "HOUSEHOLD": "#00CC96"},
 )
 fig3.update_layout(height=320, margin=dict(t=20, b=40))
 st.plotly_chart(fig3, use_container_width=True)
@@ -153,11 +153,11 @@ st.plotly_chart(fig3, use_container_width=True)
 
 # Weekly sales pattern
 st.divider()
-st.subheader("Average daily sales by weekday — all items")
+st.subheader("Average daily sales by weekday - all items")
 
 # M5 wday: 1=Sat, 2=Sun, 3=Mon ... 7=Fri
 wday_labels = {1: "Sat", 2: "Sun", 3: "Mon", 4: "Tue", 5: "Wed", 6: "Thu", 7: "Fri"}
-wday_order = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+wday_order = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"]
 
 weekly = (
     df.groupby(["cat_id", "wday"])["sales"]
@@ -175,7 +175,7 @@ fig4 = px.line(
     markers=True,
     labels={"day": "Day of week", "avg_sales": "Average units sold", "cat_id": "Category"},
     category_orders={"day": wday_order},
-    color_discrete_map={"FOODS": "#1f77b4", "HOUSEHOLD": "#ff7f0e", "HOBBIES": "#2ca02c"},
+    color_discrete_map={"FOODS": "#636EFA", "HOBBIES": "#EF553B", "HOUSEHOLD": "#00CC96"},
 )
 fig4.update_layout(height=300, margin=dict(t=20, b=40))
 st.plotly_chart(fig4, use_container_width=True)

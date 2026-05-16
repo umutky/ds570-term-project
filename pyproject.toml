@@ -23,6 +23,7 @@ dependencies = [
     "requests>=2.31",
     "streamlit>=1.35",
     "shap>=0.51.0",
+    "statsmodels>=0.14",
 ]
 
 [project.optional-dependencies]
@@ -38,10 +39,11 @@ notebooks = [
 ]
 
 [project.scripts]
-rf-fetch   = "retail_forecast.cli:fetch_data"
-rf-process = "retail_forecast.cli:process_data"
-rf-train   = "retail_forecast.cli:train"
-rf-predict = "retail_forecast.cli:predict"
+rf-fetch          = "retail_forecast.cli:fetch_data"
+rf-fetch-features = "retail_forecast.cli:fetch_features"
+rf-process        = "retail_forecast.cli:process_data"
+rf-train          = "retail_forecast.cli:train"
+rf-predict        = "retail_forecast.cli:predict"
 
 [tool.setuptools.packages.find]
 where = ["src"]

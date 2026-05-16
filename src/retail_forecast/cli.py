@@ -7,6 +7,15 @@ def fetch_data():
     fetch()
 
 
+def fetch_features():
+    """Download the pre-built feature matrix from GitHub Release (cached after first run).
+
+    Skips the ~8-minute rf-process step. Run rf-process instead to rebuild from scratch.
+    """
+    from retail_forecast.data.fetch import fetch_feature_matrix
+    fetch_feature_matrix()
+
+
 def process_data():
     """Fetch the CA_1 subset, load it, and save as processed parquet."""
     from retail_forecast.data.fetch import fetch

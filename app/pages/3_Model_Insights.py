@@ -62,7 +62,7 @@ if tweedie_model is None:
 
 
 # Feature importance 
-st.subheader("Feature importance (Tweedie model — gain)")
+st.subheader("Feature importance (Tweedie model - gain)")
 st.caption(
     "Gain measures the total improvement in the loss function brought "
     "by features at split points across all trees."
@@ -92,7 +92,7 @@ st.plotly_chart(fig_fi, use_container_width=True)
 
 # Tweedie vs Gaussian metrics                       
 st.divider()
-st.subheader("Tweedie vs Gaussian — test set metrics")
+st.subheader("Tweedie vs Gaussian - test set metrics")
 st.caption(
     "Both models use identical features and train/val/test splits. "
     "Differences in RMSE, MAE, and WMAPE reflect the benefit of the Tweedie "
@@ -161,7 +161,7 @@ else:
 
 # Actual vs Predicted                           
 st.divider()
-st.subheader("Actual vs predicted — Tweedie model on test set")
+st.subheader("Actual vs predicted - Tweedie model on test set")
 
 if tweedie_data is not None:
     col1, col2 = st.columns([1, 3])
@@ -214,7 +214,7 @@ if tweedie_data is not None:
         st.plotly_chart(fig_avp, use_container_width=True)
 
     # Aggregated daily actual vs predicted over entire test set
-    st.markdown("**Daily total demand — actual vs predicted (all items)**")
+    st.markdown("**Daily total demand - actual vs predicted (all items)**")
     agg = (
         tweedie_data.groupby("date")[["sales", "y_pred"]]
         .sum()
@@ -249,8 +249,8 @@ if tweedie_data is not None:
 st.divider()
 st.subheader("SHAP Feature Impact Analysis")
 st.info(
-    "Detailed SHAP analysis — global importance (Tweedie vs Gaussian side-by-side), "
-    "feature dependence plots, single-prediction waterfall, and category-level impact — "
+    "Detailed SHAP analysis - global importance (Tweedie vs Gaussian side-by-side), "
+    "feature dependence plots, single-prediction waterfall, and category-level impact - "
     "is available on the dedicated **SHAP Analysis** page.",
     icon="🔬",
 )

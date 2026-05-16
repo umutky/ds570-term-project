@@ -11,7 +11,7 @@ from retail_forecast.models.lgbm import LGBMForecast
 
 st.title("SHAP Feature Impact Analysis")
 st.caption(
-    "SHapley Additive exPlanations — direction-aware, per-prediction feature attributions. "
+    "SHapley Additive exPlanations - direction-aware, per-prediction feature attributions. "
     "Unlike gain-based importance, SHAP values show the marginal contribution of each feature "
     "to each individual prediction with sign and magnitude.  \n"
     "Computed on a **3,000-row random sample** of the held-out test set."
@@ -87,13 +87,13 @@ shap_vals, X_sample, cat_ids = compute_shap()
 
 
 # 1 & 2  Global feature importance
-st.subheader("1 — Global Feature Importance")
+st.subheader("1 - Global Feature Importance")
 st.caption(
-    "**Bar:** mean |SHAP| — ranks features by average impact magnitude, both models side by side.  \n"
+    "**Bar:** mean |SHAP| - ranks features by average impact magnitude, both models side by side.  \n"
     "**Beeswarm:** each dot is one prediction; color = feature value (red = high, blue = low)."
 )
 
-tab_bar, tab_bee = st.tabs(["Mean |SHAP| — Bar", "SHAP Distribution — Beeswarm"])
+tab_bar, tab_bee = st.tabs(["Mean |SHAP| - Bar", "SHAP Distribution - Beeswarm"])
 
 
 def _render_bar(key: str, color: str) -> None:
@@ -142,7 +142,7 @@ with tab_bee:
 
 # 3  Dependence plot
 st.divider()
-st.subheader("2 — Feature Dependence Plot")
+st.subheader("2 - Feature Dependence Plot")
 st.caption(
     "How a feature's value drives its SHAP contribution across all sampled predictions. "
     "Color = product category. LOWESS trend line per category."
@@ -188,9 +188,9 @@ fig_dep.update_layout(template="plotly_white")
 st.plotly_chart(fig_dep, use_container_width=True)
 
 
-#  4  Waterfall — single prediction
+#  4  Waterfall - single prediction
 st.divider()
-st.subheader("3 — Single Prediction Waterfall")
+st.subheader("3 - Single Prediction Waterfall")
 st.caption(
     "Which features pushed this specific prediction up or down from the model's expected baseline? "
     "Red bars = push prediction higher. Blue bars = push it lower."
@@ -238,7 +238,7 @@ with wf_c2:
 
 # 6  Category SHAP box plot
 st.divider()
-st.subheader("4 — Feature Impact by Category")
+st.subheader("4 - Feature Impact by Category")
 st.caption(
     "Distribution of SHAP values for one feature, split by product category. "
     "Reveals whether a feature matters more for intermittent (HOBBIES, ~72% zeros) "

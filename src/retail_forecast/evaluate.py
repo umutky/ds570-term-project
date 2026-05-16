@@ -16,7 +16,7 @@ def wmape(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     """Weighted Mean Absolute Percentage Error.
 
     denom = sum(|y_true|) so the metric is well-defined even when individual
-    actuals are zero — unlike standard MAPE which divides per-row.
+    actuals are zero - unlike standard MAPE which divides per-row.
     """
     denom = float(np.sum(np.abs(y_true)))
     if denom == 0:
